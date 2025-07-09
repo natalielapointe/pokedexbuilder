@@ -18,6 +18,27 @@ body {
 }
 
 .logo {
-  height: 80px;
+  height: 85px;
   width: auto;
+  margin: 10px 0 0 10px;
+}
+
+.randomCardGeneratorButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Kanit;
+  font-weight: 500;
+  font-size: 25px;
+  background-color: #326FBB;
+  color: white;
+  border-radius: 30px;
+  padding: 5px 30px;
+  margin: 10px 0;
+}
+
+.diceIcon {
+  height: 25px;
+  width: auto;
+  margin-left: 2px;
 }

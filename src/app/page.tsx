@@ -47,7 +47,7 @@ useEffect(() => {
         src="/logo-1x.webp" 
         srcSet="/logo-1x.webp 1x, /logo-2x.webp 2x, /logo-3x.webp 3x" 
         alt="Your logo" 
-        style={{ height: '85px', width: 'auto', margin: '10px 0 0 10px' }}
+        className='logo'
       />
       <div className='flex flex-col items-center justify-center text-center pt-[50]'>  
         {noCardsFound ? ( 
@@ -61,13 +61,13 @@ useEffect(() => {
                 alt={randomCard.name} 
                 onError={(e) => (e.currentTarget.src = '/placeholder.png')}
               />
-              <button className='flex items-center justify-center bg-blue-500 text-white rounded-lg px-4 py-2 mt-4 mb-2 hover:bg-blue-600 transition-colors duration-300 kanit font-medium'>
+              <button className='randomCardGeneratorButton hover:bg-blue-600 transition-colors duration-300'>
                 Random
                 <img 
                   src="/diceIcon-1x.webp" 
                   srcSet="/diceIcon-1x.webp 1x, /diceIcon-2x.webp 2x, /diceIcon-3x.webp 3x" 
                   alt="Your diceIcon" 
-                  style={{ height: '21.4px', width: 'auto', margin: '0 0 5px 0' }}
+                  className='diceIcon'
                 />
               </button>
               <h2>{randomCard.name}</h2>
