@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { Space_Mono, Kanit } from 'next/font/google';
+import "./globals.scss";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+export const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'], // Space Mono only supports 400 & 700, both normal & italic
+  style: ['normal', 'italic'],
+  variable: '--font-space-mono',
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+export const kanit = Kanit({
+  subsets: ['latin'],
+  weight: [
+    '100', '200', '300', '400', '500', '600', '700', '800', '900'
+  ],
+  style: ['normal', 'italic'],
+  variable: '--font-kanit',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -25,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${spaceMono.variable} ${kanit.variable} antialiased`}
       >
         {children}
       </body>
