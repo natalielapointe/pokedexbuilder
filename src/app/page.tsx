@@ -61,7 +61,7 @@ useEffect(() => {
                 alt={randomCard.name} 
                 onError={(e) => (e.currentTarget.src = '/placeholder.png')}
               />
-              <button className='flex items-center justify-center bg-blue-500 text-white rounded-lg px-4 py-2 mt-4 mb-2 hover:bg-blue-600 transition-colors duration-300'>
+              <button className='flex items-center justify-center bg-blue-500 text-white rounded-lg px-4 py-2 mt-4 mb-2 hover:bg-blue-600 transition-colors duration-300 kanit font-medium'>
                 Random
                 <img 
                   src="/diceIcon-1x.webp" 

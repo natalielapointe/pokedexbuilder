@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Space_Mono, Kanit } from 'next/font/google';
-import "./globals.scss";
+import "./globals.css";
 
 export const spaceMono = Space_Mono({
   subsets: ['latin'],
-  weight: ['400', '700'], // Space Mono only supports 400 & 700, both normal & italic
+  weight: ['400', '700'],
   style: ['normal', 'italic'],
   variable: '--font-space-mono',
   display: 'swap',
@@ -33,8 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${spaceMono.variable} ${kanit.variable} antialiased`}
-      >
+        className={`${kanit.variable} ${spaceMono.variable}`}>
         {children}
       </body>
     </html>
