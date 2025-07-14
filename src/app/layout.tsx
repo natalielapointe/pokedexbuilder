@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Mono, Kanit } from 'next/font/google';
-import "./globals.css";
+import "./main.css";
 
 export const spaceMono = Space_Mono({
   subsets: ['latin'],
