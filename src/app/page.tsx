@@ -83,21 +83,41 @@ export default function Home() {
     return stage;
   }
 
- function grabArrayValues(arr?: CardModifier[] | null): ReactNode {
-  if (!arr || arr.length === 0) return "None";
+  function grabArrayValues(arr?: CardModifier[] | null): ReactNode {
+    if (!arr || arr.length === 0) return "None";
 
-  return arr.map((w, index) => (
-    <span key={index} className="inline-flex items-center gap-1">
-      <img
-        src={`/energyIcons/${w.type.toLowerCase()}.svg`}
-        alt={w.type}
-        className="EnergySymbol"
-      />
-      {w.value ?? ""}
-      {index < arr.length - 1 && ","}
-    </span>
-  ));
-}
+    return arr.map((w, index) => (
+      <span key={index} className="inline-flex items-center gap-1">
+        <img
+          src={`/energyIcons/${w.type.toLowerCase()}.svg`}
+          alt={w.type}
+          className="EnergySymbol"
+        />
+        {w.value ?? ""}
+        {index < arr.length - 1 && ","}
+      </span>
+    ));
+  }
+
+  function renderRetreatCost(retreatCost?: number): ReactNode {
+    if (!retreatCost || retreatCost <= 0) {
+      return <span>None</span>;
+    }
+
+    return (
+      <div className="flex flex-row items-center justify-center">
+        {Array.from({ length: retreatCost }).map((_, index) => (
+          <img
+            key={index}
+            src="/energyIcons/colorless.svg"
+            alt="Colorless Energy"
+            className="EnergySymbol"
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div>
       <img 
@@ -106,27 +126,29 @@ export default function Home() {
         alt="Your logo" 
         className="Logo"
       />
-      <div className="MainContainer">  
+      <div className="MainContainer p-[20px] lg:pt-[60px]">  
         {noCardsFound ? ( 
           <p>No cards found. Please try again later.</p>
         ) :
           randomCard ? (
-            <div className="flex flex-col items-center justify-center">
-              <img 
-                className="PokemonCardImage"
-                src={randomCard.image ?? "/placeholder.png"} 
-                onError={(e) => (e.currentTarget.src = "/placeholder.png")}
-              />
-              <button className="RandomCardGeneratorButton hover:bg-blue-600 transition-colors duration-300">
-                Random
+            <div className="flex flex-col lg:flex-row items-center justify-center">
+              <div className="flex flex-col items-center justify-center">
                 <img 
-                  src="/diceIcon-1x.webp" 
-                  srcSet="/diceIcon-1x.webp 1x, /diceIcon-2x.webp 2x, /diceIcon-3x.webp 3x" 
-                  alt="Your diceIcon" 
-                  className="diceIcon"
+                  className="PokemonCardImage"
+                  src={randomCard.image ?? "/placeholder.png"} 
+                  onError={(e) => (e.currentTarget.src = "/placeholder.png")}
                 />
-              </button>
-              <div className="CardDetailsContainer">
+                <button className="RandomCardGeneratorButton hover:bg-blue-600 transition-colors duration-300">
+                  Random
+                  <img 
+                    src="/diceIcon-1x.webp" 
+                    srcSet="/diceIcon-1x.webp 1x, /diceIcon-2x.webp 2x, /diceIcon-3x.webp 3x" 
+                    alt="Your diceIcon" 
+                    className="diceIcon"
+                  />
+                </button>
+              </div>
+              <div className="CardDetailsContainer lg:pl-[20px]">
                 <div className="CardEvolutionInfo">
                   <div className="CardStage">
                     {randomCard.stage}
@@ -139,11 +161,11 @@ export default function Home() {
                 </div>
                 <div className="CardDetails">
                   <div className="CardHeader sectionPadding">
-                    <span>{randomCard.name}</span>
+                    <span className="PokemonName">{randomCard.name}</span>
                     <div className="HpAndType">
                       <div className="HPContainer">
                         <span className="HP">HP</span>
-                        <span>{randomCard.hp}</span>
+                        <span className="HpValue">{randomCard.hp}</span>
                       </div>
                       {randomCard.type &&
                         <img
@@ -196,7 +218,7 @@ export default function Home() {
                     </div>
                     <div className="CardAttribute">
                       <span className="AttributeHeader">Retreat Cost</span>
-                      <span>{randomCard.retreatCost}</span>
+                      <span>{renderRetreatCost(randomCard.retreatCost)}</span>
                     </div>
                   </div>
                   <div className="CardFooter sectionPadding flex flex-row justify-between items-stretch">
