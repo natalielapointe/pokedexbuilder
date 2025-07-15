@@ -2,6 +2,8 @@
 
 import { useState, useEffect, ReactNode } from "react";
 import TCGdex, { Card } from "@tcgdex/sdk";
+import type { CardResume } from '@tcgdex/sdk';
+const tcgdex = new TCGdex('en');
 
 type CardModifier = {
   type: string;
@@ -19,7 +21,7 @@ type CardSet = {
   name: string;
   symbol: string;
   cardCount: number | never[];
-}
+};
 
 export default function Home() {
   const [randomCard, setRandomCard] = useState<null | {
@@ -39,47 +41,63 @@ export default function Home() {
     illustrator?: string;
   }>(null);
 
+  const [cardList, setCardList] = useState<CardResume[]>([]);
   const [noCardsFound, setNoCardsFound] = useState<null | boolean>(null);
 
   useEffect(() => {
-    const tcgdex = new TCGdex("en");
+  const fetchValidCard = async () => {
+    try {
+      const cardRefs = await tcgdex.card.list();;
 
-    const getRandomCard = async () => {
-      const fullCard = await tcgdex.card.get("bw9-97");
-      console.log(fullCard);
+      let validCard: Card | null = null;
 
-      setRandomCard({
-        name: fullCard?.name || "Unknown",
-        image: `${fullCard?.image}/high.webp` || "placeholder.png",
-        rarity: fullCard?.rarity || "Unknown",
-        type: fullCard?.types?.[0] || "",
-        stage: formatStage(fullCard?.stage),
-        evolveFrom: fullCard?.evolveFrom,
-        hp: fullCard?.hp || 0,
-        weaknesses: fullCard?.weaknesses || [],
-        resistances: fullCard?.resistances || [],
-        retreatCost: fullCard?.retreat || 0,
-        attacks: fullCard?.attacks || [],
-        set: {
-          name: fullCard?.set?.name || "Unknown",
-          symbol: fullCard?.set?.symbol || "",
-          cardCount: fullCard?.set?.cardCount.official || [],
-        },
-        cardNumber: fullCard?.localId || undefined,
-        illustrator: fullCard?.illustrator || "Unknown",
-      });
-    };
+      while (!validCard) {
+        const random = cardRefs[Math.floor(Math.random() * cardRefs.length)];
+        const fullCard = await tcgdex.card.get(random.id);
 
-    getRandomCard();
-  }, []);
+        if (fullCard?.image && fullCard?.types?.length) {
+          validCard = fullCard;
+        }
+      }
+
+      setCardList(cardRefs);
+      loadCardData(validCard);
+    } catch (err) {
+      console.error("Failed to fetch cards", err);
+      setNoCardsFound(true);
+    }
+  };
+
+  fetchValidCard();
+}, []);
+
+
+  const loadCardData = async (fullCard: Card) => {
+    setRandomCard({
+      name: fullCard?.name || "Unknown",
+      image: `${fullCard?.image}/high.webp` || "placeholder.png",
+      rarity: fullCard?.rarity || "Unknown",
+      type: fullCard?.types?.[0] || "",
+      stage: formatStage(fullCard?.stage),
+      evolveFrom: fullCard?.evolveFrom,
+      hp: fullCard?.hp || 0,
+      weaknesses: fullCard?.weaknesses || [],
+      resistances: fullCard?.resistances || [],
+      retreatCost: fullCard?.retreat || 0,
+      attacks: fullCard?.attacks || [],
+      set: {
+        name: fullCard?.set?.name || "Unknown",
+        symbol: fullCard?.set?.symbol || "",
+        cardCount: fullCard?.set?.cardCount.official || [],
+      },
+      cardNumber: fullCard?.localId || undefined,
+      illustrator: fullCard?.illustrator || "Unknown",
+    });
+  };
 
   function formatStage(stage?: string): string {
     if (!stage) return "Unknown";
-
-    if (stage.startsWith("Stage")) {
-      return stage.replace("Stage", "Stage ");
-    }
-
+    if (stage.startsWith("Stage")) return stage.replace("Stage", "Stage ");
     return stage;
   }
 
@@ -129,25 +147,34 @@ export default function Home() {
       <div className="MainContainer p-[20px] lg:pt-[60px]">  
         {noCardsFound ? ( 
           <p>No cards found. Please try again later.</p>
-        ) :
-          randomCard ? (
-            <div className="flex flex-col lg:flex-row items-center justify-center">
-              <div className="flex flex-col items-center justify-center">
+        ) : randomCard ? (
+          <div className="flex flex-col lg:flex-row items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+              <img 
+                className="PokemonCardImage"
+                src={randomCard.image ?? "/placeholder.png"} 
+                onError={(e) => (e.currentTarget.src = "/placeholder.png")}
+              />
+              <button 
+                className="RandomCardGeneratorButton hover:bg-blue-600 transition-colors duration-300"
+                onClick={async () => {
+                  if (!cardList.length) return;
+                  const randomIndex = Math.floor(Math.random() * cardList.length);
+                  const newCard = await new TCGdex("en").card.get(cardList[randomIndex].id);
+                  if (newCard) {
+                    loadCardData(newCard);
+                  }
+                }}
+              >
+                Random
                 <img 
-                  className="PokemonCardImage"
-                  src={randomCard.image ?? "/placeholder.png"} 
-                  onError={(e) => (e.currentTarget.src = "/placeholder.png")}
+                  src="/diceIcon-1x.webp" 
+                  srcSet="/diceIcon-1x.webp 1x, /diceIcon-2x.webp 2x, /diceIcon-3x.webp 3x" 
+                  alt="Your diceIcon" 
+                  className="diceIcon"
                 />
-                <button className="RandomCardGeneratorButton hover:bg-blue-600 transition-colors duration-300">
-                  Random
-                  <img 
-                    src="/diceIcon-1x.webp" 
-                    srcSet="/diceIcon-1x.webp 1x, /diceIcon-2x.webp 2x, /diceIcon-3x.webp 3x" 
-                    alt="Your diceIcon" 
-                    className="diceIcon"
-                  />
-                </button>
-              </div>
+              </button>
+            </div>
               <div className="CardDetailsContainer lg:pl-[20px]">
                 <div className="CardEvolutionInfo">
                   <div className="CardStage">
