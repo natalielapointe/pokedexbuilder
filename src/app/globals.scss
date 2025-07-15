@@ -88,7 +88,6 @@ body {
 .CardDetails {
   background-color: white;
   border-radius: 5px;
-  padding: 10px;
 }
 
 .CardHeader {
@@ -102,7 +101,7 @@ body {
   margin-left: 2px;
 }
 
-.CardDetails {
+.sectionPadding {
   padding: 10px 20px;
 }
 
@@ -117,4 +116,63 @@ body {
   font-family: 'Space Mono', monospace; 
   font-size: 12px;
   font-weight: bold;
+}
+
+.EnergySymbol {
+  height: 15px;
+  width: auto;
+}
+
+.AttackEffect {
+  text-align: left;
+}
+
+.AttackName {
+  font-size: 18px;
+}
+
+.AttackDamage {
+  font-size: 25px;
+}
+
+.CardAttributesContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.CardAttribute {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.AttributeHeader {
+  text-decoration: underline;
+  font-size: 16px;
+}
+
+.CardSet {
+  text-align: left;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3px white;
+}
+
+.CardIllustrator {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3px white;
+}
+
+.WhiteLine {
+  width: 2px;
+  background-color: #fff;
+}
+
+.CardFooter {
+  background-color: #cbcbcb;
 }

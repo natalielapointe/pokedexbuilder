@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import TCGdex, { Card } from "@tcgdex/sdk";
 
 type CardModifier = {
@@ -83,11 +83,21 @@ export default function Home() {
     return stage;
   }
 
-  function grabArrayValues(arr?: CardModifier[] | null): string {
-    if (!arr || arr.length === 0) return "None";
-    return arr.map((w) => `${w.type} ${w.value ?? ""}`).join(", ");
-  }
+ function grabArrayValues(arr?: CardModifier[] | null): ReactNode {
+  if (!arr || arr.length === 0) return "None";
 
+  return arr.map((w, index) => (
+    <span key={index} className="inline-flex items-center gap-1">
+      <img
+        src={`/energyIcons/${w.type.toLowerCase()}.svg`}
+        alt={w.type}
+        className="EnergySymbol"
+      />
+      {w.value ?? ""}
+      {index < arr.length - 1 && ","}
+    </span>
+  ));
+}
   return (
     <div>
       <img 
@@ -128,7 +138,7 @@ export default function Home() {
                   )}
                 </div>
                 <div className="CardDetails">
-                  <div className="CardHeader">
+                  <div className="CardHeader sectionPadding">
                     <span>{randomCard.name}</span>
                     <div className="HpAndType">
                       <div className="HPContainer">
@@ -139,29 +149,29 @@ export default function Home() {
                         <img
                           src={`/energyIcons/${randomCard.type.toLowerCase()}.svg`}
                           alt={randomCard.type}
-                          className="h-5 w-5"
+                          className="EnergySymbol"
                         />
                       }
                     </div>
                   </div>
-                  <div className="CardMoves">
+                  <div className="CardMoves sectionPadding">
                     {randomCard.attacks?.map((attack, index) => (
                       <div key={index} className="AttackContainer">
                         <div
-                          className="AttackRow flex items-center justify-between gap-2 border-b py-1 text-sm"
+                          className="AttackRow flex items-center justify-between gap-2 py-1 text-sm"
                         >
                           <div className="AttackCost flex gap-1">
                             {attack.cost?.map((type, i) => (
                               <img
                                 key={i}
-                                src={`/energyIcons/${type.toLowerCase()}.webp`}
-                                alt={type}
-                                className="h-5 w-5"
+                                src={`/energyIcons/${randomCard.type.toLowerCase()}.svg`}
+                                alt={randomCard.type}
+                                className="EnergySymbol"
                               />
                             ))}
                           </div>
-                          <div className="flex-1 text-center">{attack.name}</div>
-                          <div className="text-right min-w-[40px] font-semibold">
+                          <div className="AttackName flex-1 text-center">{attack.name}</div>
+                          <div className="AttackDamage text-right min-w-[40px]">
                             {attack.damage ?? ""}
                           </div>
                         </div>
@@ -171,31 +181,46 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  <div className="CardAttributes">
-                    <span>
-                      Weakness: {grabArrayValues(randomCard.weaknesses)}
-                    </span>
-                    <span>
-                      Resistance: {grabArrayValues(randomCard.resistances)}
-                    </span>
-                    <span>{`Retreat Cost: ${randomCard.retreatCost}`}</span>
+                  <div className="CardAttributesContainer sectionPadding">
+                    <div className="CardAttribute">
+                      <span className="AttributeHeader">Weakness</span>
+                      <span>
+                        {grabArrayValues(randomCard.weaknesses)}
+                      </span>
+                    </div>
+                    <div className="CardAttribute">
+                      <span className="AttributeHeader">Resistance</span>
+                      <span>
+                        {grabArrayValues(randomCard.resistances)}
+                      </span>
+                    </div>
+                    <div className="CardAttribute">
+                      <span className="AttributeHeader">Retreat Cost</span>
+                      <span>{randomCard.retreatCost}</span>
+                    </div>
                   </div>
-                  <div className="CardSet flex items-center justify-center">
-                    <span>Set: {randomCard.set.name}</span>
-                    {randomCard.set.symbol && (
-                      <img
-                        src={`${randomCard.set.symbol}.webp`}
-                        alt={randomCard.set.name}
-                        className="SetSymbol"
-                        style={{ height: "20px", width: "auto", marginLeft: "5px" }}
-                      />
-                    )}
-                  </div>
-                  <div className="CardNumber">
-                    {randomCard.cardNumber && `${randomCard.cardNumber}/${randomCard.set.cardCount}`}
-                  </div>
-                  <div className="CardIllustrator">
-                    Illustrator: {randomCard.illustrator}
+                  <div className="CardFooter sectionPadding flex flex-row justify-between items-stretch">
+                    <div className="CardSet">
+                      <div className="flex items-center justify-center">
+                          <span className="font-bold">{randomCard.set.name}</span>
+                          {randomCard.set.symbol && (
+                            <img
+                              src={`${randomCard.set.symbol}.webp`}
+                              alt={randomCard.set.name}
+                              className="SetSymbol"
+                              style={{ height: "20px", width: "auto", marginLeft: "5px" }}
+                            />
+                          )}
+                      </div>
+                      <div className="CardNumber">
+                        {randomCard.cardNumber && `${randomCard.cardNumber}/${randomCard.set.cardCount}`}
+                      </div>
+                    </div>
+                    <div className="WhiteLine"/>
+                    <div className="CardIllustrator">
+                      <span className="font-bold">Illustrator</span>
+                      <span>{randomCard.illustrator}</span>
+                    </div>
                   </div>
                 </div>
               </div>
