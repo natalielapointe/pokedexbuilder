@@ -28,7 +28,7 @@ export default function Home() {
     name: string;
     image: string;
     rarity: string;
-    type: string;
+    types: string[];
     stage: string;
     evolveFrom?: string;
     hp: number;
@@ -45,39 +45,39 @@ export default function Home() {
   const [noCardsFound, setNoCardsFound] = useState<null | boolean>(null);
 
   useEffect(() => {
-  const fetchValidCard = async () => {
-    try {
-      const cardRefs = await tcgdex.card.list();;
+    const fetchValidCard = async () => {
+      try {
+        const cardRefs = await tcgdex.card.list();;
 
-      let validCard: Card | null = null;
+        let validCard: Card | null = null;
 
-      while (!validCard) {
-        const random = cardRefs[Math.floor(Math.random() * cardRefs.length)];
-        const fullCard = await tcgdex.card.get(random.id);
+        while (!validCard) {
+          const random = cardRefs[Math.floor(Math.random() * cardRefs.length)];
+          const fullCard = await tcgdex.card.get(random.id);
 
-        if (fullCard?.image && fullCard?.types?.length) {
-          validCard = fullCard;
+          if (fullCard?.image && fullCard?.types?.length) {
+            validCard = fullCard;
+          }
         }
+
+        setCardList(cardRefs);
+        console.log(validCard)
+        loadCardData(validCard);
+      } catch (err) {
+        console.error("Failed to fetch cards", err);
+        setNoCardsFound(true);
       }
+    };
 
-      setCardList(cardRefs);
-      loadCardData(validCard);
-    } catch (err) {
-      console.error("Failed to fetch cards", err);
-      setNoCardsFound(true);
-    }
-  };
-
-  fetchValidCard();
-}, []);
-
+    fetchValidCard();
+    }, []);
 
   const loadCardData = async (fullCard: Card) => {
     setRandomCard({
       name: fullCard?.name || "Unknown",
       image: `${fullCard?.image}/high.webp` || "placeholder.png",
       rarity: fullCard?.rarity || "Unknown",
-      type: fullCard?.types?.[0] || "",
+      types: Array.isArray(fullCard.types) ? fullCard.types : [],
       stage: formatStage(fullCard?.stage),
       evolveFrom: fullCard?.evolveFrom,
       hp: fullCard?.hp || 0,
@@ -123,7 +123,7 @@ export default function Home() {
     }
 
     return (
-      <div className="flex flex-row items-center justify-center">
+      <div className="flex flex-row items-center justify-center gap-1">
         {Array.from({ length: retreatCost }).map((_, index) => (
           <img
             key={index}
@@ -134,6 +134,21 @@ export default function Home() {
         ))}
       </div>
     );
+  }
+
+  function condenseIllustrator(illustrator: string): string {
+    return illustrator.replace(/Illus\.＆Direc\.\s*/g, '').trim();
+  }
+
+  function renderTypes(types: string[]): React.ReactNode[] {
+    return types.map((type) => (
+      <img
+        key={type}
+        src={`/energyIcons/${type.toLowerCase()}.svg`}
+        alt={type}
+        className="EnergySymbol"
+      />
+    ));
   }
 
   return (
@@ -194,18 +209,12 @@ export default function Home() {
                         <span className="HP">HP</span>
                         <span className="HpValue">{randomCard.hp}</span>
                       </div>
-                      {randomCard.type &&
-                        <img
-                          src={`/energyIcons/${randomCard.type.toLowerCase()}.svg`}
-                          alt={randomCard.type}
-                          className="EnergySymbol"
-                        />
-                      }
+                      {randomCard.types && renderTypes(randomCard.types)}
                     </div>
                   </div>
                   <div className="CardMoves sectionPadding">
                     {randomCard.attacks?.map((attack, index) => (
-                      <div key={index} className="AttackContainer">
+                      <div key={index} className="AttackContainer pb-[10px]">
                         <div
                           className="AttackRow flex items-center justify-between gap-2 py-1 text-sm"
                         >
@@ -213,8 +222,8 @@ export default function Home() {
                             {attack.cost?.map((type, i) => (
                               <img
                                 key={i}
-                                src={`/energyIcons/${randomCard.type.toLowerCase()}.svg`}
-                                alt={randomCard.type}
+                                src={`/energyIcons/${type.toLowerCase()}.svg`}
+                                alt={type}
                                 className="EnergySymbol"
                               />
                             ))}
@@ -262,13 +271,12 @@ export default function Home() {
                           )}
                       </div>
                       <div className="CardNumber">
-                        {randomCard.cardNumber && `${randomCard.cardNumber}/${randomCard.set.cardCount}`}
+                        {randomCard.cardNumber && randomCard.cardNumber}{randomCard.set.cardCount && `/${randomCard.set.cardCount}`}
                       </div>
                     </div>
-                    <div className="WhiteLine"/>
                     <div className="CardIllustrator">
                       <span className="font-bold">Illustrator</span>
-                      <span>{randomCard.illustrator}</span>
+                      <span>{randomCard.illustrator && condenseIllustrator(randomCard.illustrator)}</span>
                     </div>
                   </div>
                 </div>
