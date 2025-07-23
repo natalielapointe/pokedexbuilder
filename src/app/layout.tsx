@@ -30,9 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${kanit.variable} ${spaceMono.variable} BackgroundImage`}
-      >
+      <body className={`${kanit.variable} ${spaceMono.variable}`}>
         {children}
       </body>
     </html>

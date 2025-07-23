@@ -57,7 +57,6 @@ export default function Home() {
     const fetchValidCard = async () => {
       try {
         const cardRefs = await tcgdex.card.list();
-
         const validCard = await getValidRandomCard(cardRefs);
 
         setCardList(cardRefs);
@@ -191,6 +190,27 @@ export default function Home() {
     return name;
   }
 
+  function returnAttackEnergies(attack: { cost?: string[] }): React.ReactNode {
+    if (attack.cost) {
+      return attack.cost.map((type, i) => (
+        <img
+          key={i}
+          src={`/energyIcons/${type?.toLowerCase?.() ?? "energyless"}.svg`}
+          alt={type}
+          className="EnergySymbol"
+        />
+      ));
+    } else {
+      return (
+        <img
+          src={"/energyIcons/energyless.svg"}
+          alt="energyless"
+          className="EnergySymbol"
+        />
+      );
+    }
+  }
+
   return (
     <div>
       <img
@@ -294,14 +314,7 @@ export default function Home() {
                       <div key={index} className="AttackContainer pb-[10px]">
                         <div className="AttackRow flex items-center justify-between gap-2 py-1 text-sm">
                           <div className="AttackCost flex gap-1">
-                            {attack.cost?.map((type, i) => (
-                              <img
-                                key={i}
-                                src={`/energyIcons/${type.toLowerCase()}.svg`}
-                                alt={type}
-                                className="EnergySymbol"
-                              />
-                            ))}
+                            {returnAttackEnergies(attack)}
                           </div>
                           <div className="AttackName flex-1 text-center">
                             {attack.name}
