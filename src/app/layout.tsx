@@ -1,23 +1,21 @@
 import type { Metadata } from "next";
-import { Space_Mono, Kanit } from 'next/font/google';
+import { Space_Mono, Kanit } from "next/font/google";
 import "./main.css";
 
 export const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-space-mono',
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-space-mono",
+  display: "swap",
 });
 
 export const kanit = Kanit({
-  subsets: ['latin'],
-  weight: [
-    '100', '200', '300', '400', '500', '600', '700', '800', '900'
-  ],
-  style: ['normal', 'italic'],
-  variable: '--font-kanit',
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-kanit",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${kanit.variable} ${spaceMono.variable}`}>
+        className={`${kanit.variable} ${spaceMono.variable} BackgroundImage`}
+      >
         {children}
       </body>
     </html>
