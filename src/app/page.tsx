@@ -199,7 +199,7 @@ export default function Home() {
         alt="Your logo"
         className="Logo"
       />
-      <div className="MainContainer m-[10px] lg:m-[50px]">
+      <div className="MainContainer m-[10px] lg:m-[40px]">
         {noCardsFound ? (
           <p>No cards found. Please try again later.</p>
         ) : randomCard ? (
@@ -210,7 +210,7 @@ export default function Home() {
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
                 placeholder="Enter Pokémon card ID"
-                className="border border-gray-300 rounded px-2 py-1 text-sm w-60"
+                className="border border-gray-300 rounded px-2 py-1 text-sm w-60 bg-white"
               />
               <button
                 onClick={async () => {
