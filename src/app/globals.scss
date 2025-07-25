@@ -74,6 +74,8 @@ body::before {
 .PokemonCardImage {
   height: 320px;
   width: auto;
+  border-radius: 12px;
+  box-shadow: 7px 7px 6px rgba(169, 169, 169, 0.5);
 }
 
 .RandomCardGeneratorButton {
@@ -87,7 +89,7 @@ body::before {
   color: white;
   border-radius: 30px;
   padding: 5px 30px;
-  margin: 10px 0;
+  margin: 20px 0 10px;
 }
 
 .CardEvolutionInfo {
