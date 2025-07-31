@@ -12,6 +12,7 @@ import {
   renderRetreatCost,
   formatStage,
 } from "./helpers";
+import classes from "./classNames";
 
 type CardModifier = {
   type: string;
@@ -119,11 +120,11 @@ export default function Home() {
     if (!arr || arr.length === 0) return "None";
 
     return arr.map((w, index) => (
-      <span key={index} className="inline-flex items-center gap-1">
+      <span key={index} className={classes.attributeIconContainer}>
         <img
           src={`/energyIcons/${w.type.toLowerCase()}.svg`}
           alt={w.type}
-          className="EnergySymbol"
+          className={classes.energySymbol}
         />
         {w.value ?? ""}
         {index < arr.length - 1 && ","}
@@ -137,50 +138,22 @@ export default function Home() {
         src="/logo-1x.webp"
         srcSet="/logo-1x.webp 1x, /logo-2x.webp 2x, /logo-3x.webp 3x"
         alt="Your logo"
-        className="Logo"
+        className={classes.logo}
       />
-      <div className="MainContainer m-[10px]">
+      <div className={classes.contentContainer}>
         {noCardsFound ? (
           <p>No cards found. Please try again later.</p>
         ) : randomCard ? (
-          <div className="flex flex-col items-center justify-center">
-            <div className="CardSearch flex items-center gap-2 mb-4">
-              <input
-                type="text"
-                value={searchId}
-                onChange={(e) => setSearchId(e.target.value)}
-                placeholder="Enter Pokémon card ID"
-                className="border border-gray-300 rounded px-2 py-1 text-sm w-60 bg-white"
-              />
-              <button
-                onClick={async () => {
-                  if (!searchId.trim()) return;
-
-                  try {
-                    const foundCard = await tcgdex.card.get(searchId.trim());
-                    if (foundCard) {
-                      console.log(foundCard);
-                      loadCardData(foundCard);
-                    }
-                  } catch (err) {
-                    console.error("Failed to fetch card by ID:", err);
-                    alert("Card not found. Please check the ID.");
-                  }
-                }}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
-              >
-                Search
-              </button>
-            </div>
-            <div className="flex flex-col lg:flex-row items-center justify-center">
-              <div className="flex flex-col items-center justify-center">
+          <div className={classes.contentContainer}>
+            <div className={classes.cardResultContainer}>
+              <div className={classes.pokemonCardImageContainer}>
                 <img
-                  className="PokemonCardImage"
+                  className={classes.pokemonCardImage}
                   src={randomCard.image ?? "/placeholder.png"}
                   onError={(e) => (e.currentTarget.src = "/placeholder.png")}
                 />
                 <button
-                  className="RandomCardGeneratorButton hover:bg-blue-600 transition-colors duration-300"
+                  className={classes.cardGeneratorButton}
                   onClick={async () => {
                     if (!cardList.length) return;
                     const validCard = await getValidRandomCard(cardList);
@@ -192,91 +165,102 @@ export default function Home() {
                     src="/diceIcon-1x.webp"
                     srcSet="/diceIcon-1x.webp 1x, /diceIcon-2x.webp 2x, /diceIcon-3x.webp 3x"
                     alt="Your diceIcon"
-                    className="diceIcon"
+                    className={classes.diceIcon}
                   />
                 </button>
               </div>
-              <div className="CardDetailsContainer lg:pl-[20px]">
-                <div className="CardEvolutionInfo">
-                  <div className="CardStage">{randomCard.stage}</div>
+              <div className={classes.cardDetailsContainer}>
+                <div
+                  className={classes.cardEvolutionInfo}
+                  style={{
+                    paintOrder: "stroke fill",
+                    WebkitTextStroke: "3px white",
+                  }}
+                >
+                  <div className={classes.cardStage}>{randomCard.stage}</div>
                   {randomCard.evolveFrom && (
-                    <div className="EvolvesFrom">
+                    <div className={classes.evolvesFrom}>
                       {`Evolves from ${randomCard.evolveFrom}`}
                     </div>
                   )}
                 </div>
-                <div className="CardDetails">
-                  <div className="CardHeader sectionPadding">
-                    <span className="PokemonName">
+                <div className={classes.cardDetails}>
+                  <div className={classes.cardHeader}>
+                    <span className={classes.cardName}>
                       {formatCardNameWithSymbol(randomCard.name)}
                     </span>
-                    <div className="HpAndType">
-                      <div className="HPContainer">
-                        <span className="HP">HP</span>
-                        <span className="HpValue">{randomCard.hp}</span>
+                    <div className={classes.hpAndType}>
+                      <div className={classes.hpContainer}>
+                        <span className={classes.hp}>HP</span>
+                        <span className={classes.hpValue}>{randomCard.hp}</span>
                       </div>
                       {randomCard.types && renderTypes(randomCard.types)}
                     </div>
                   </div>
-                  <div className="CardMoves sectionPadding">
+                  <div className={classes.cardMoves}>
                     {randomCard.abilties?.map((ability, index) => (
-                      <div key={index} className="AbilityContainer pb-[10px]">
-                        <div className="AbilityRow text-left">
-                          <div className="AbilityHeader flex-row">
-                            <span className="AbilityType">{ability.type}</span>
-                            <span className="AbilityName">{ability.name}</span>
+                      <div key={index} className={classes.abilityContainer}>
+                        <div className={classes.abilityRow}>
+                          <div className={classes.abilityHeader}>
+                            <span className={classes.abilityType}>
+                              {ability.type}
+                            </span>
+                            <span className={classes.abilityName}>
+                              {ability.name}
+                            </span>
                           </div>
-                          <div className="AttackEffect">{ability.effect}</div>
+                          <div className={classes.attackEffect}>
+                            {ability.effect}
+                          </div>
                         </div>
                       </div>
                     ))}
                     {randomCard.attacks?.map((attack, index) => (
-                      <div key={index} className="AttackContainer pb-[10px]">
-                        <div className="AttackRow flex items-center justify-between gap-2 py-1 text-sm">
-                          <div className="AttackCost flex gap-1">
+                      <div key={index} className={classes.attackContainer}>
+                        <div className={classes.attackRow}>
+                          <div className={classes.attackCost}>
                             {returnAttackEnergies(attack)}
                           </div>
-                          <div className="AttackName flex-1 text-center">
+                          <div className={classes.attackName}>
                             {attack.name}
                           </div>
-                          <div className="AttackDamage text-right min-w-[40px]">
+                          <div className={classes.attackDamage}>
                             {attack.damage ?? ""}
                           </div>
                         </div>
-                        <div className="AttackEffect">
+                        <div className={classes.attackEffect}>
                           {attack.effect || ""}
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="CardAttributesContainer sectionPadding">
-                    <div className="CardAttribute">
-                      <span className="AttributeHeader">Weakness</span>
+                  <div className={classes.cardAttributesContainer}>
+                    <div className={classes.cardAttribute}>
+                      <span className={classes.attributeHeader}>Weakness</span>
                       <span>{grabArrayValues(randomCard.weaknesses)}</span>
                     </div>
-                    <div className="CardAttribute">
-                      <span className="AttributeHeader">Resistance</span>
+                    <div className={classes.cardAttribute}>
+                      <span className={classes.attributeHeader}>
+                        Resistance
+                      </span>
                       <span>{grabArrayValues(randomCard.resistances)}</span>
                     </div>
-                    <div className="CardAttribute">
-                      <span className="AttributeHeader">Retreat Cost</span>
+                    <div className={classes.cardAttribute}>
+                      <span className={classes.attributeHeader}>
+                        Retreat Cost
+                      </span>
                       <span>{renderRetreatCost(randomCard.retreatCost)}</span>
                     </div>
                   </div>
-                  <div className="CardFooter sectionPadding flex flex-row justify-between items-stretch">
-                    <div className="CardSet">
+                  <div className={classes.cardFooter}>
+                    <div className={classes.cardSet}>
                       <div className="flex items-center justify-center">
                         <span className="font-bold">{randomCard.set.name}</span>
                         {randomCard.set.symbol && (
                           <img
                             src={`${randomCard.set.symbol}.webp`}
                             alt={randomCard.set.name}
-                            className="SetSymbol"
-                            style={{
-                              height: "20px",
-                              width: "auto",
-                              marginLeft: "5px",
-                            }}
+                            className={classes.setSymbol}
                           />
                         )}
                       </div>
@@ -298,6 +282,34 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+            <div className={classes.cardSearch}>
+              <input
+                type="text"
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value)}
+                placeholder="Enter Pokémon card ID"
+                className={classes.input}
+              />
+              <button
+                onClick={async () => {
+                  if (!searchId.trim()) return;
+
+                  try {
+                    const foundCard = await tcgdex.card.get(searchId.trim());
+                    if (foundCard) {
+                      console.log(foundCard);
+                      loadCardData(foundCard);
+                    }
+                  } catch (err) {
+                    console.error("Failed to fetch card by ID:", err);
+                    alert("Card not found. Please check the ID.");
+                  }
+                }}
+                className={classes.searchButton}
+              >
+                Search
+              </button>
             </div>
           </div>
         ) : (

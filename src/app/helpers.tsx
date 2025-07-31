@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
+import classes from "./classNames";
 
 function renderTypes(types: string[]): React.ReactNode[] {
-  return types.map((type) => (
+  return types.map((type, index) => (
     <img
       key={type}
       src={`/energyIcons/${type.toLowerCase()}.svg`}
       alt={type}
-      className="EnergySymbol"
+      className={`${classes.energySymbol} ${index > 0 ? "pl-[3px]" : ""}`}
     />
   ));
 }
@@ -18,7 +19,7 @@ function returnAttackEnergies(attack: { cost?: string[] }): React.ReactNode {
         key={i}
         src={`/energyIcons/${type?.toLowerCase?.() ?? "energyless"}.svg`}
         alt={type}
-        className="EnergySymbol"
+        className={classes.energySymbol}
       />
     ));
   } else {
@@ -26,7 +27,7 @@ function returnAttackEnergies(attack: { cost?: string[] }): React.ReactNode {
       <img
         src={"/energyIcons/energyless.svg"}
         alt="energyless"
-        className="EnergySymbol"
+        className={classes.energySymbol}
       />
     );
   }
@@ -75,7 +76,7 @@ function renderRetreatCost(retreatCost?: number): ReactNode {
           key={index}
           src="/energyIcons/colorless.svg"
           alt="Colorless Energy"
-          className="EnergySymbol"
+          className={classes.energySymbol}
         />
       ))}
     </div>
