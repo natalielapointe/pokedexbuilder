@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Mono, Kanit } from "next/font/google";
 import "./main.css";
+import classes from "./classNames";
 
 export const spaceMono = Space_Mono({
   subsets: ["latin"],
@@ -29,8 +30,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${kanit.variable} ${spaceMono.variable}`}>
+    <html lang="en" className={classes.html}>
+      <body
+        className={`${kanit.variable} ${spaceMono.variable} ${classes.body}`}
+      >
         {children}
       </body>
     </html>

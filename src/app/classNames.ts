@@ -1,8 +1,9 @@
 const classes = {
+  html: "[background:linear-gradient(145deg,_rgba(255,255,255,1)_0%,_rgba(237,237,237,1)_50%,_rgba(229,229,229,1)_65%,_rgba(238,238,238,1)_90%,_rgba(255,255,255,1)_100%)] min-w-full",
+  body: "relative z-0 min-h-screen m-0 p-0 font-['Kanit',sans-serif] text-[14px] overflow-x-hidden",
   logo: "h-[95px] w-auto pt-[10px] pl-[10px]",
   contentContainer:
     "flex flex-col items-center justify-center text-center m-[10px]",
-
   cardSearch: "flex items-center gap-2 mt-8",
   input: "border border-gray-300 rounded px-2 py-1 text-sm w-60 bg-white",
   searchButton:
@@ -16,7 +17,7 @@ const classes = {
   diceIcon: "h-[25px] w-auto ml-[2px]",
   cardDetailsContainer: "lg:pl-[20px]",
   cardEvolutionInfo:
-    "flex flex-row items-center bg-[#ddd] w-fit ml-[20px] rounded-t-[10px] text-[clamp(1rem,2vw,1.3rem)] overflow-hidden",
+    "flex flex-row items-center bg-[#ddd] w-fit ml-[20px] rounded-t-[10px] text-[clamp(1rem,2vw,1.3rem)] overflow-hidden [paint-order:stroke_fill] [-webkit-text-stroke-width:3px] [-webkit-text-stroke-color:white]",
   cardStage: "bg-[#c9c9c9] shadow-[3px_0_4px_#0002] py-[5px] px-[10px]",
   evolvesFrom: "font-extralight italic py-[5px] px-[10px]",
   cardDetails:
@@ -52,7 +53,12 @@ const classes = {
     "underline underline-offset-[3px] text-[clamp(1rem,2vw,1.25rem)] mb-[5px]",
   cardFooter:
     "bg-[#cbcbcb] rounded-b-[5px] text-[clamp(.875rem,2vw,1rem)] p-[20px] flex flex-row justify-between items-stretch",
-  cardSet: "text-left text-stroke-3 text-stroke-white paint-order-sf",
+  cardSet:
+    "text-left [paint-order:stroke_fill] [-webkit-text-stroke-width:3px] [-webkit-text-stroke-color:white]",
+  cardSetNameContainer: "flex items-center justify-center",
+  cardSetName: "font-bold",
+  cardIllustrator:
+    "flex flex-col text-right [paint-order:stroke_fill] [-webkit-text-stroke-width:3px] [-webkit-text-stroke-color:white]",
 };
 
 export default classes;

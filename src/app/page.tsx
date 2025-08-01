@@ -170,13 +170,7 @@ export default function Home() {
                 </button>
               </div>
               <div className={classes.cardDetailsContainer}>
-                <div
-                  className={classes.cardEvolutionInfo}
-                  style={{
-                    paintOrder: "stroke fill",
-                    WebkitTextStroke: "3px white",
-                  }}
-                >
+                <div className={classes.cardEvolutionInfo}>
                   <div className={classes.cardStage}>{randomCard.stage}</div>
                   {randomCard.evolveFrom && (
                     <div className={classes.evolvesFrom}>
@@ -254,8 +248,10 @@ export default function Home() {
                   </div>
                   <div className={classes.cardFooter}>
                     <div className={classes.cardSet}>
-                      <div className="flex items-center justify-center">
-                        <span className="font-bold">{randomCard.set.name}</span>
+                      <div className={classes.cardSetNameContainer}>
+                        <span className={classes.cardSetName}>
+                          {randomCard.set.name}
+                        </span>
                         {randomCard.set.symbol && (
                           <img
                             src={`${randomCard.set.symbol}.webp`}
@@ -264,7 +260,7 @@ export default function Home() {
                           />
                         )}
                       </div>
-                      <div className="CardNumber">
+                      <div>
                         {randomCard.cardNumber && randomCard.cardNumber}
                         {randomCard.set.cardCount &&
                         randomCard.set.cardCount > 0
@@ -272,7 +268,7 @@ export default function Home() {
                           : null}
                       </div>
                     </div>
-                    <div className="CardIllustrator">
+                    <div className={classes.cardIllustrator}>
                       <span className="font-bold">Illustrator</span>
                       <span>
                         {randomCard.illustrator &&
