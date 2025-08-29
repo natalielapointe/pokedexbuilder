@@ -137,7 +137,7 @@ export default function Home() {
       <img
         src="/logo-1x.webp"
         srcSet="/logo-1x.webp 1x, /logo-2x.webp 2x, /logo-3x.webp 3x"
-        alt="Your logo"
+        alt="Pokemon Card Generator"
         className={classes.logo}
       />
       <div className={classes.contentContainer}>
@@ -150,6 +150,7 @@ export default function Home() {
                 <img
                   className={classes.pokemonCardImage}
                   src={randomCard.image ?? "/placeholder.png"}
+                  alt={randomCard.name}
                   onError={(e) => (e.currentTarget.src = "/placeholder.png")}
                 />
                 <button
@@ -164,22 +165,22 @@ export default function Home() {
                   <img
                     src="/diceIcon-1x.webp"
                     srcSet="/diceIcon-1x.webp 1x, /diceIcon-2x.webp 2x, /diceIcon-3x.webp 3x"
-                    alt="Your diceIcon"
+                    alt=""
                     className={classes.diceIcon}
                   />
                 </button>
               </div>
               <div className={classes.cardDetailsContainer}>
-                <div className={classes.cardEvolutionInfo}>
+                <section className={classes.cardEvolutionInfo}>
                   <div className={classes.cardStage}>{randomCard.stage}</div>
                   {randomCard.evolveFrom && (
                     <div className={classes.evolvesFrom}>
                       {`Evolves from ${randomCard.evolveFrom}`}
                     </div>
                   )}
-                </div>
+                </section>
                 <div className={classes.cardDetails}>
-                  <div className={classes.cardHeader}>
+                  <section className={classes.cardHeader}>
                     <span className={classes.cardName}>
                       {formatCardNameWithSymbol(randomCard.name)}
                     </span>
@@ -190,8 +191,8 @@ export default function Home() {
                       </div>
                       {randomCard.types && renderTypes(randomCard.types)}
                     </div>
-                  </div>
-                  <div className={classes.cardMoves}>
+                  </section>
+                  <section className={classes.cardMoves}>
                     {randomCard.abilties?.map((ability, index) => (
                       <div key={index} className={classes.abilityContainer}>
                         <div className={classes.abilityRow}>
@@ -212,41 +213,40 @@ export default function Home() {
                     {randomCard.attacks?.map((attack, index) => (
                       <div key={index} className={classes.attackContainer}>
                         <div className={classes.attackRow}>
-                          <div className={classes.attackCost}>
+                          <h3 className={classes.attackName}>{attack.name}</h3>
+
+                          <p className={classes.attackCost}>
                             {returnAttackEnergies(attack)}
-                          </div>
-                          <div className={classes.attackName}>
-                            {attack.name}
-                          </div>
-                          <div className={classes.attackDamage}>
+                          </p>
+
+                          <p className={classes.attackDamage}>
                             {attack.damage ?? ""}
-                          </div>
+                          </p>
                         </div>
-                        <div className={classes.attackEffect}>
+
+                        <p className={classes.attackEffect}>
                           {attack.effect || ""}
-                        </div>
+                        </p>
                       </div>
                     ))}
-                  </div>
-                  <div className={classes.cardAttributesContainer}>
+                  </section>
+                  <section className={classes.cardAttributesContainer}>
                     <div className={classes.cardAttribute}>
-                      <span className={classes.attributeHeader}>Weakness</span>
-                      <span>{grabArrayValues(randomCard.weaknesses)}</span>
+                      <h3 className={classes.attributeHeader}>Weakness</h3>
+                      <p>{grabArrayValues(randomCard.weaknesses)}</p>
                     </div>
+
                     <div className={classes.cardAttribute}>
-                      <span className={classes.attributeHeader}>
-                        Resistance
-                      </span>
-                      <span>{grabArrayValues(randomCard.resistances)}</span>
+                      <h3 className={classes.attributeHeader}>Resistance</h3>
+                      <p>{grabArrayValues(randomCard.resistances)}</p>
                     </div>
+
                     <div className={classes.cardAttribute}>
-                      <span className={classes.attributeHeader}>
-                        Retreat Cost
-                      </span>
-                      <span>{renderRetreatCost(randomCard.retreatCost)}</span>
+                      <h3 className={classes.attributeHeader}>Retreat Cost</h3>
+                      <p>{renderRetreatCost(randomCard.retreatCost)}</p>
                     </div>
-                  </div>
-                  <div className={classes.cardFooter}>
+                  </section>
+                  <section className={classes.cardFooter}>
                     <div className={classes.cardSet}>
                       <div className={classes.cardSetNameContainer}>
                         <span className={classes.cardSetName}>
@@ -255,7 +255,7 @@ export default function Home() {
                         {randomCard.set.symbol && (
                           <img
                             src={`${randomCard.set.symbol}.webp`}
-                            alt={randomCard.set.name}
+                            alt=""
                             className={classes.setSymbol}
                           />
                         )}
@@ -275,7 +275,7 @@ export default function Home() {
                           formatIllustrator(randomCard.illustrator)}
                       </span>
                     </div>
-                  </div>
+                  </section>
                 </div>
               </div>
             </div>
