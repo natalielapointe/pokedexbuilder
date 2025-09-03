@@ -14,13 +14,15 @@ const classes = {
   contentContainer:
     "flex flex-col items-center justify-center text-center m-[10px]",
   cardResultContainer: "flex flex-col lg:flex-row items-center justify-center",
-  pokemonCardImageContainer: "flex flex-col items-center justify-center",
+  pokemonCardImageContainer:
+    "flex flex-col items-center lg:self-start lg:translate-y-[40px]",
   cardDetailsContainer: "lg:pl-[20px]",
   cardMoves: "p-[20px]",
   cardAttributesContainer:
     "flex flex-row justify-between w-full p-[20px] shadow-[0_0_10px_#0002] relative",
   cardFooter:
     "bg-[#cbcbcb] rounded-b-[5px] text-[clamp(.875rem,2vw,1rem)] p-[20px] flex flex-row justify-between items-stretch",
+  loadingText: "text-[clamp(1.25rem,2vw,1.5rem)]",
 
   // === Header / Branding ===
   logo: "h-[95px] w-auto pt-[10px] pl-[10px]",
@@ -29,7 +31,6 @@ const classes = {
   cardName: "flex flex-row text-[clamp(1.25rem,2vw,1.5rem)] align-center",
   hpAndType: "flex flex-row [align-items:anchor-center]",
   hpContainer: "pr-[3px]",
-  setSymbol: "h-[20px] w-auto ml-[5px]",
 
   // === HP / Stats ===
   hp: "font-['Space_Mono',monospace] text-[clamp(.75rem,2vw,.9rem)] font-bold",
@@ -55,17 +56,19 @@ const classes = {
   // === Card Evolution ===
   cardEvolutionInfo: `
     flex flex-row items-center bg-[#ddd] w-fit ml-[20px] rounded-t-[10px]
-    text-[clamp(1rem,2vw,1.3rem)] overflow-hidden
+    overflow-hidden
     [paint-order:stroke_fill]
     [-webkit-text-stroke-width:3px]
     [-webkit-text-stroke-color:white]
   `,
-  cardStage: "bg-[#c9c9c9] shadow-[3px_0_4px_#0002] py-[5px] px-[10px]",
-  evolvesFrom: "font-extralight italic py-[5px] px-[10px]",
+  cardStage:
+    "bg-[#c9c9c9] shadow-[3px_0_4px_#0002] py-[5px] px-[10px] text-[clamp(1rem,2vw,1.3rem)]",
+  evolvesFrom:
+    "font-light italic py-[5px] px-[10px] text-[clamp(.8rem,2vw,1.1rem)] self-end",
 
   // === Card Details ===
   cardDetails:
-    "bg-white rounded-[5px] max-w-[500px] min-w-[370px] overflow-hidden",
+    "bg-white rounded-[5px] sm:w-[500px] min-w-[370px] overflow-hidden",
 
   // === Abilities ===
   abilityContainer: "pb-[10px]",
@@ -74,8 +77,6 @@ const classes = {
   abilityType:
     "bg-[#de3c43] text-white px-[10px] mr-[10px] rounded-[10px] italic text-[clamp(.9rem,2vw,1rem)] tracking-[1px]",
   abilityName: "text-[#99131e] text-[clamp(1.125rem,2vw,1.2rem)] bold",
-  attackEffect:
-    "text-left text-[clamp(.875rem,2vw,.95rem)] font-light leading-[1.3]",
 
   // === Attacks ===
   attackContainer: "pb-[10px]",
@@ -83,6 +84,8 @@ const classes = {
   attackCost: "flex order-first gap-1",
   attackName: "flex-1 text-center text-[clamp(1.125rem,2vw,1.2rem)]",
   attackDamage: "text-[clamp(1.5rem,2vw,1.75rem)] text-right min-w-[40px]",
+  attackEffect:
+    "text-left text-[clamp(.875rem,2vw,.95rem)] font-light leading-[1.3]",
 
   // === Attributes ===
   cardAttribute: "flex flex-col w-full text-[clamp(1rem,2vw,1.2rem)]",
@@ -98,8 +101,9 @@ const classes = {
     [-webkit-text-stroke-width:3px]
     [-webkit-text-stroke-color:white]
   `,
-  cardSetNameContainer: "flex items-center justify-center",
+  cardSetNameContainer: "flex items-left",
   cardSetName: "font-bold",
+  setSymbol: "h-[20px] w-auto mx-[5px]",
   cardIllustrator: `
     flex flex-col text-right
     [paint-order:stroke_fill]

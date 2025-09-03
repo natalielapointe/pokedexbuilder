@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import classes from "./classNames";
+import type { Card } from "@tcgdex/sdk";
 
 function renderTypes(types: string[]): React.ReactNode[] {
   return types.map((type, index) => (
@@ -89,6 +90,84 @@ function formatStage(stage?: string): string {
   return stage;
 }
 
+function preloadImage(src: string | undefined): Promise<void> {
+  return new Promise<void>((resolve) => {
+    if (!src) return resolve();
+
+    const img: HTMLImageElement = new Image();
+    img.src = src;
+
+    const anyImg = img as any;
+
+    if (typeof anyImg.decode === "function") {
+      anyImg
+        .decode()
+        .then(() => resolve())
+        .catch(() => resolve());
+      return;
+    }
+
+    if (img.complete) {
+      resolve();
+      return;
+    }
+
+    img.onload = () => resolve();
+    img.onerror = () => resolve();
+  });
+}
+
+async function preloadImages(srcs: (string | undefined)[]): Promise<void> {
+  const unique = Array.from(new Set(srcs.filter(Boolean))) as string[];
+  await Promise.all(unique.map(preloadImage));
+}
+
+function collectCardImageUrls(fullCard: Card) {
+  const urls: string[] = [];
+
+  const cardImg = fullCard?.image ? `${fullCard.image}/high.webp` : undefined;
+  if (cardImg) urls.push(cardImg);
+
+  if (fullCard?.set?.symbol) {
+    urls.push(`${fullCard.set.symbol}.webp`);
+  }
+
+  const types = Array.isArray(fullCard?.types) ? fullCard.types : [];
+  types.forEach((type) =>
+    urls.push(`/energyIcons/${String(type).toLowerCase()}.svg`),
+  );
+
+  const wk = Array.isArray(fullCard?.weaknesses) ? fullCard.weaknesses : [];
+  const rs = Array.isArray(fullCard?.resistances) ? fullCard.resistances : [];
+  [...wk, ...rs].forEach(
+    (energy) =>
+      energy?.type &&
+      urls.push(`/energyIcons/${String(energy.type).toLowerCase()}.svg`),
+  );
+
+  const atks = Array.isArray(fullCard?.attacks) ? fullCard.attacks : [];
+  atks.forEach((attack) =>
+    (attack?.cost ?? []).forEach((cost) =>
+      urls.push(`/energyIcons/${String(cost).toLowerCase()}.svg`),
+    ),
+  );
+
+  if (fullCard?.retreat && fullCard.retreat > 0) {
+    for (let i = 0; i < fullCard.retreat; i++) {
+      urls.push(`/energyIcons/colorless.svg`);
+    }
+  }
+
+  urls.push(
+    "/diceIcon-1x.webp",
+    "/diceIcon-2x.webp",
+    "/diceIcon-3x.webp",
+    "./placeholder.png",
+  );
+
+  return urls;
+}
+
 export {
   renderTypes,
   returnAttackEnergies,
@@ -96,4 +175,6 @@ export {
   formatIllustrator,
   renderRetreatCost,
   formatStage,
+  preloadImages,
+  collectCardImageUrls,
 };

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, ReactNode } from "react";
 import TCGdex, { Card } from "@tcgdex/sdk";
-import type { CardResume } from "@tcgdex/sdk";
 const tcgdex = new TCGdex("en");
 import {
   renderTypes,
@@ -11,6 +10,8 @@ import {
   formatIllustrator,
   renderRetreatCost,
   formatStage,
+  preloadImages,
+  collectCardImageUrls,
 } from "./helpers";
 import classes from "./classNames";
 
@@ -58,22 +59,38 @@ export default function Home() {
     category: string;
   }>(null);
 
-  const [cardList, setCardList] = useState<CardResume[]>([]);
+  const [cardIds, setCardIds] = useState<string[]>([]);
   const [noCardsFound, setNoCardsFound] = useState<null | boolean>(null);
   const [searchId, setSearchId] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchValidCard = async () => {
       try {
-        const cardRefs = await tcgdex.card.list();
-        const validCard = await getValidRandomCard(cardRefs);
+        let ids: string[] = [];
 
-        setCardList(cardRefs);
-        console.log(validCard);
-        loadCardData(validCard);
+        const cached = localStorage.getItem("tcgdexCardIds");
+        if (cached) {
+          ids = JSON.parse(cached);
+        } else {
+          const cardRefs = await tcgdex.card.list();
+          ids = cardRefs.map((card) => card.id);
+          localStorage.setItem("tcgdexCardIds", JSON.stringify(ids));
+        }
+
+        setCardIds(ids);
+
+        const fullCard = await getValidRandomCardFromIds(ids);
+
+        const urls = collectCardImageUrls(fullCard);
+        await preloadImages(urls);
+
+        loadCardData(fullCard);
+        setIsLoading(false);
       } catch (err) {
         console.error("Failed to fetch cards", err);
         setNoCardsFound(true);
+        setIsLoading(false);
       }
     };
 
@@ -105,10 +122,10 @@ export default function Home() {
     });
   };
 
-  const getValidRandomCard = async (cardRefs: CardResume[]): Promise<Card> => {
+  const getValidRandomCardFromIds = async (ids: string[]): Promise<Card> => {
     while (true) {
-      const random = cardRefs[Math.floor(Math.random() * cardRefs.length)];
-      const fullCard = await tcgdex.card.get(random.id);
+      const id = ids[Math.floor(Math.random() * ids.length)];
+      const fullCard = await tcgdex.card.get(id);
 
       if (fullCard?.image && fullCard?.category === "Pokemon") {
         return fullCard;
@@ -141,7 +158,36 @@ export default function Home() {
         className={classes.logo}
       />
       <div className={classes.contentContainer}>
-        {noCardsFound ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center mt-[20vh]">
+            <img
+              className="pokeball-spin"
+              src="/pokeball.png"
+              alt=""
+              aria-hidden="true"
+              width={40}
+              height={40}
+            />
+            <h1
+              className={classes.loadingText}
+              role="status"
+              aria-live="polite"
+            >
+              Loading
+              <span className="inline-flex gap-0.5 pl-[5px]" aria-hidden="true">
+                <span className="inline-block animate-bounce [animation-delay:-0.48s]">
+                  .
+                </span>
+                <span className="inline-block animate-bounce [animation-delay:-0.32s]">
+                  .
+                </span>
+                <span className="inline-block animate-bounce [animation-delay:-0.16s]">
+                  .
+                </span>
+              </span>
+            </h1>
+          </div>
+        ) : noCardsFound ? (
           <p>No cards found. Please try again later.</p>
         ) : randomCard ? (
           <div className={classes.contentContainer}>
@@ -156,8 +202,8 @@ export default function Home() {
                 <button
                   className={classes.cardGeneratorButton}
                   onClick={async () => {
-                    if (!cardList.length) return;
-                    const validCard = await getValidRandomCard(cardList);
+                    if (!cardIds.length) return;
+                    const validCard = await getValidRandomCardFromIds(cardIds);
                     loadCardData(validCard);
                   }}
                 >
@@ -170,15 +216,19 @@ export default function Home() {
                   />
                 </button>
               </div>
+
               <div className={classes.cardDetailsContainer}>
                 <section className={classes.cardEvolutionInfo}>
-                  <div className={classes.cardStage}>{randomCard.stage}</div>
+                  <div
+                    className={classes.cardStage}
+                  >{`${randomCard.stage} Pokemon`}</div>
                   {randomCard.evolveFrom && (
                     <div className={classes.evolvesFrom}>
                       {`Evolves from ${randomCard.evolveFrom}`}
                     </div>
                   )}
                 </section>
+
                 <div className={classes.cardDetails}>
                   <section className={classes.cardHeader}>
                     <span className={classes.cardName}>
@@ -192,6 +242,7 @@ export default function Home() {
                       {randomCard.types && renderTypes(randomCard.types)}
                     </div>
                   </section>
+
                   <section className={classes.cardMoves}>
                     {randomCard.abilties?.map((ability, index) => (
                       <div key={index} className={classes.abilityContainer}>
@@ -214,22 +265,20 @@ export default function Home() {
                       <div key={index} className={classes.attackContainer}>
                         <div className={classes.attackRow}>
                           <h3 className={classes.attackName}>{attack.name}</h3>
-
                           <p className={classes.attackCost}>
                             {returnAttackEnergies(attack)}
                           </p>
-
                           <p className={classes.attackDamage}>
                             {attack.damage ?? ""}
                           </p>
                         </div>
-
                         <p className={classes.attackEffect}>
                           {attack.effect || ""}
                         </p>
                       </div>
                     ))}
                   </section>
+
                   <section className={classes.cardAttributesContainer}>
                     <div className={classes.cardAttribute}>
                       <h3 className={classes.attributeHeader}>Weakness</h3>
@@ -243,31 +292,36 @@ export default function Home() {
 
                     <div className={classes.cardAttribute}>
                       <h3 className={classes.attributeHeader}>Retreat Cost</h3>
-                      <p>{renderRetreatCost(randomCard.retreatCost)}</p>
+                      <div>{renderRetreatCost(randomCard.retreatCost)}</div>
                     </div>
                   </section>
+
                   <section className={classes.cardFooter}>
                     <div className={classes.cardSet}>
                       <div className={classes.cardSetNameContainer}>
-                        <span className={classes.cardSetName}>
-                          {randomCard.set.name}
-                        </span>
-                        {randomCard.set.symbol && (
-                          <img
-                            src={`${randomCard.set.symbol}.webp`}
-                            alt=""
-                            className={classes.setSymbol}
-                          />
-                        )}
+                        <p className={classes.cardSetName}>Card set</p>
                       </div>
                       <div>
-                        {randomCard.cardNumber && randomCard.cardNumber}
-                        {randomCard.set.cardCount &&
-                        randomCard.set.cardCount > 0
-                          ? `/${randomCard.set.cardCount}`
-                          : null}
+                        {randomCard.cardNumber && (
+                          <p className="flex">
+                            {randomCard.set.name}
+                            {randomCard.set.symbol && (
+                              <img
+                                src={`${randomCard.set.symbol}.webp`}
+                                alt=""
+                                className={classes.setSymbol}
+                              />
+                            )}
+                            {randomCard.cardNumber}
+                            {randomCard.set.cardCount &&
+                              (randomCard.set.cardCount > 0
+                                ? `/${randomCard.set.cardCount}`
+                                : null)}
+                          </p>
+                        )}
                       </div>
                     </div>
+
                     <div className={classes.cardIllustrator}>
                       <span className="font-bold">Illustrator</span>
                       <span>
@@ -279,6 +333,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
             <div className={classes.cardSearch}>
               <input
                 type="text"
@@ -290,7 +345,6 @@ export default function Home() {
               <button
                 onClick={async () => {
                   if (!searchId.trim()) return;
-
                   try {
                     const foundCard = await tcgdex.card.get(searchId.trim());
                     if (foundCard) {
@@ -308,9 +362,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-        ) : (
-          <p>Loading...</p>
-        )}
+        ) : null}
       </div>
     </div>
   );
