@@ -1,6 +1,32 @@
 import { ReactNode } from "react";
 import classes from "./classNames";
-import type { Card } from "@tcgdex/sdk";
+import TCGdex, { Card } from "@tcgdex/sdk";
+const tcgdex = new TCGdex("en");
+
+type CardModifier = { type: string; value?: string };
+
+const getValidRandomCardFromIds = async (ids: string[]): Promise<Card> => {
+  while (true) {
+    const id = ids[Math.floor(Math.random() * ids.length)];
+    const fullCard = await tcgdex.card.get(id);
+    if (fullCard?.image && fullCard?.category === "Pokemon") return fullCard;
+  }
+};
+
+function grabArrayValues(arr?: CardModifier[] | null): ReactNode {
+  if (!arr || arr.length === 0) return "None";
+  return arr.map((w, index) => (
+    <span key={index} className={classes.attributeIconContainer}>
+      <img
+        src={`/energyIcons/${w.type.toLowerCase()}.svg`}
+        alt={w.type}
+        className={classes.energySymbol}
+      />
+      {w.value ?? ""}
+      {index < arr.length - 1 && ","}
+    </span>
+  ));
+}
 
 function renderTypes(types: string[]): React.ReactNode[] {
   return types.map((type, index) => (
@@ -177,4 +203,6 @@ export {
   formatStage,
   preloadImages,
   collectCardImageUrls,
+  getValidRandomCardFromIds,
+  grabArrayValues,
 };
